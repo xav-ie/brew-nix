@@ -168,6 +168,11 @@ let
                 mkdir -p "$out/Library"
                 cp -R Library/* "$out/Library/"
               fi
+
+              if [ -d "$out/Library/Fonts" ]; then
+                mkdir -p "$out/share/fonts"
+                cp -R $out/Library/Fonts/* $out/share/fonts
+              fi
             ''
           else
             ''''
