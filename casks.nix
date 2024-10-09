@@ -151,6 +151,16 @@ let
       installPhase = ''
         pwd
         ls -la
+        for app in ./*.app; do
+          mkdir -p "$out/Applications/${sourceRoot}"
+          cp -R "$app" "$out/Applications/${sourceRoot}/"
+        done
+
+        if [ -d "Contents" ]; then
+          echo "CONTENTS"
+          mkdir -p "$out/Applications/${sourceRoot}"
+          cp -R . "$out/Applications/${sourceRoot}/"
+        fi
         ${
           if (hasPkg cask) then
             ''
@@ -179,10 +189,8 @@ let
         }
         ${
           if (hasApp cask) then
+            # TODO: assert the .app exists
             ''
-              mkdir -p "$out/Applications/${sourceRoot}"
-              cp -R . "$out/Applications/${sourceRoot}"
-
               if [[ -e "$out/Applications/${sourceRoot}/Contents/MacOS/${getName cask}" ]]; then
                 makeWrapper "$out/Applications/${sourceRoot}/Contents/MacOS/${getName cask}" $out/bin/${cask.token}
               elif [[ -e "$out/Applications/${sourceRoot}/Contents/MacOS/${lib.removeSuffix ".app" sourceRoot}" ]]; then
@@ -194,6 +202,7 @@ let
         }
         ${
           if (hasBinary cask && !hasApp cask) then
+            # TODO: get the name of the binary and only copy that
             ''
               mkdir -p $out/bin
               cp -R "./*" "$out/bin"
